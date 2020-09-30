@@ -88,5 +88,17 @@ namespace JoinVsOrderedPairing.Extensions
         public static IEnumerable<(T, T)> Pair<T>(this IEnumerable<T> left, IEnumerable<T> right)
             where T : IComparable<T>
             => left.PairSelectOnOrderedInputs(right, x => x, x => x, (left, right) => (left, right));
+
+        public static IEnumerable<Result> JoinSelect<Left, Right, Key, Result>(
+            this IEnumerable<Left> left, IEnumerable<Right> right,
+            Func<Left, Key> leftKeyExtractor,
+            Func<Right, Key> rightKeyExtractor,
+            Func<Left, Right, Result> resultSelector)
+            where Key : IComparable<Key>
+            => left.Join(right, leftKeyExtractor, rightKeyExtractor, resultSelector);
+
+        public static IEnumerable<(T, T)> JoinPair<T>(this IEnumerable<T> left, IEnumerable<T> right)
+            where T : IComparable<T>
+            => left.JoinSelect(right, x => x, x => x, (left, right) => (left, right));
     }
 }
