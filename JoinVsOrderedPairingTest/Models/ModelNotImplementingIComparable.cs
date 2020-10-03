@@ -1,4 +1,4 @@
-﻿using Key = System.Int32;
+﻿using Key = System.Int32;   // Duplicated at: PairTestWithModelNotImplementingIComparableLists.cs
 
 namespace JoinVsOrderedPairingTest.Models
 {
