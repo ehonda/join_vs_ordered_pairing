@@ -25,11 +25,11 @@ namespace JoinVsOrderedPairingTest.Tests
             _resultSelector = resultSelector;
         }
 
-        private IEnumerable<Result> Pairing() => 
+        private IEnumerable<Result> PairSelectResult() => 
             _left.PairSelect(_right, _leftKeySelector, _rightKeySelector, _resultSelector);
 
         protected void ExpectNumberOfResults(int expectedCount)
-            => Assert.That(Pairing(), Has.Exactly(expectedCount).Items);
+            => Assert.That(PairSelectResult(), Has.Exactly(expectedCount).Items);
 
         protected void ExpectExactlyOneResultOf(
             Result expectedResult, Func<Result, Result, bool> resultComparator)
@@ -37,7 +37,7 @@ namespace JoinVsOrderedPairingTest.Tests
 
         protected void ExpectExactlyNResultsOf(
             int expectedCount, Result expectedResult, Func<Result, Result, bool> resultComparator)
-            => Assert.That(Pairing(), Has.Exactly(expectedCount).Items.Matches<Result>(
+            => Assert.That(PairSelectResult(), Has.Exactly(expectedCount).Items.Matches<Result>(
                 result => resultComparator(result, expectedResult)));
 
         [SetUp]
