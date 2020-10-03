@@ -1,40 +1,14 @@
-using JoinVsOrderedPairing.Extensions;
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 
 namespace JoinVsOrderedPairingTest.Tests
 {
-    public class PairTest
+    [TestFixture]
+    public class PairTestWithStringLists
+        : PairTestFixtureWithIdenticalListTypesAndPairResult<string, string>
     {
-        private List<string> _left;
-        private List<string> _right;
-
-        private IEnumerable<(string, string)> Pairing() => _left.Pair(_right);
-
-        private void ExpectNumberOfPairs(int expectedCount)
-            => Assert.That(Pairing(), Has.Exactly(expectedCount).Items);
-
-        private void ExpectExactlyOnePairOf((string, string) expectedPair)
-            => ExpectExactlyNPairsOf(1, expectedPair);
-
-        private void ExpectExactlyNPairsOf(int expectedCount, (string, string) expectedPair)
-            => Assert.That(Pairing(), Has.Exactly(expectedCount).Items.Matches<(string, string)>(
-                pair => pair == expectedPair));
-
-        private void TestWithSymmetricalSetups(Action<List<string>, List<string>> test)
+        public PairTestWithStringLists()
+            : base(x => x)
         {
-            Setup();
-            test(_left, _right);
-            Setup();
-            test(_right, _left);
-        }
-
-        [SetUp]
-        public void Setup()
-        {
-            _left = new List<string>();
-            _right = new List<string>();
         }
 
         // TODO: null tests
@@ -84,11 +58,5 @@ namespace JoinVsOrderedPairingTest.Tests
                 ExpectNumberOfPairs(1);
                 ExpectExactlyOnePairOf(("A", "A"));
             });
-
-        [Test]
-        public void Models_Not_Implementing_IComparable_Get_Compared_Via_Key_Selector()
-        {
-
-        }
     }
 }

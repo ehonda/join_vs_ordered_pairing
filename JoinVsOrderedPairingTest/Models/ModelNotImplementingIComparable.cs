@@ -1,7 +1,9 @@
-﻿namespace JoinVsOrderedPairingTest.Models
+﻿using Key = System.Int32;
+
+namespace JoinVsOrderedPairingTest.Models
 {
     public class ModelNotImplementingIComparable
     {
-        public int Key { get; set; }
+        public Key Key { get; set; }
     }
 }

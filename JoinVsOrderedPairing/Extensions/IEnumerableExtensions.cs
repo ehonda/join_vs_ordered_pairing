@@ -82,7 +82,8 @@ namespace JoinVsOrderedPairing.Extensions
             Func<Right, Key> rightKeySelector,
             Func<Left, Right, Result> resultSelector)
             where Key : IComparable<Key>
-            => left.OrderBy(x => x).PairSelectOnOrderedInputs(right.OrderBy(x => x),
+            => left.OrderBy(x => leftKeySelector(x)).PairSelectOnOrderedInputs(
+                right.OrderBy(x => rightKeySelector(x)),
                 leftKeySelector, rightKeySelector, resultSelector);
 
         public static IEnumerable<(T, T)> Pair<T>(this IEnumerable<T> left, IEnumerable<T> right)
