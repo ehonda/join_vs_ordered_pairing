@@ -10,27 +10,25 @@ namespace JoinVsOrderedPairingTest.Tests
         : PairTestFixture<T, T, Key, (T, T)>
         where Key : IComparable<Key>
     {
-        private readonly Func<T, Key> _keySelector;
-        private readonly Func<(T, T), (T, T), bool> _resultComparator;
+        private readonly Func<(T, T), (T, T), bool> _pairComparator;
 
         public PairTestFixtureWithIdenticalListTypesAndPairResult(
             Func<T, Key> keySelector)
             : base(keySelector, keySelector, (l, r) => (l, r))
         {
-            _keySelector = keySelector;
-            _resultComparator = (p, q) =>
-                _keySelector(p.Item1).IsEqualTo(_keySelector(q.Item1))
-                && _keySelector(p.Item2).IsEqualTo(_keySelector(q.Item2));
+            _pairComparator = (p, q) =>
+                keySelector(p.Item1).IsEqualTo(keySelector(q.Item1))
+                && keySelector(p.Item2).IsEqualTo(keySelector(q.Item2));
         }
 
         protected void ExpectNumberOfPairs(int expectedCount)
             => ExpectNumberOfResults(expectedCount);
 
         protected void ExpectExactlyOnePairOf((T, T) expectedPair)
-            => ExpectExactlyOneResultOf(expectedPair, _resultComparator);
+            => ExpectExactlyOneResultOf(expectedPair, _pairComparator);
 
         protected void ExpectExactlyNPairsOf(int expectedCount, (T, T) expectedPair)
-            => ExpectExactlyNResultsOf(expectedCount, expectedPair, _resultComparator);
+            => ExpectExactlyNResultsOf(expectedCount, expectedPair, _pairComparator);
 
         protected void TestWithSymmetricalSetups(Action<List<T>, List<T>> test)
         {
