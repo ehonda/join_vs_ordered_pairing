@@ -3,7 +3,7 @@ using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 
-namespace JoinVsOrderedPairingTest
+namespace JoinVsOrderedPairingTest.Tests
 {
     public class PairTest
     {
@@ -84,5 +84,11 @@ namespace JoinVsOrderedPairingTest
                 ExpectNumberOfPairs(1);
                 ExpectExactlyOnePairOf(("A", "A"));
             });
+
+        [Test]
+        public void Models_Not_Implementing_IComparable_Get_Compared_Via_Key_Selector()
+        {
+
+        }
     }
 }

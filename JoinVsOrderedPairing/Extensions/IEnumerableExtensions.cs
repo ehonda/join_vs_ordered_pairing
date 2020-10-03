@@ -9,7 +9,7 @@ namespace JoinVsOrderedPairing.Extensions
         /// <summary>
         /// Pairs elements in <paramref name="left"/> with matching elements
         /// in <paramref name="right"/>, by comparison on keys extract with
-        /// <paramref name="leftKeyExtractor"/> and <paramref name="rightKeyExtractor"/>.
+        /// <paramref name="leftKeySelector"/> and <paramref name="rightKeySelector"/>.
         /// Inputs must be sorted on these keys.
         /// </summary>
         /// <typeparam name="Left">Type of left elements</typeparam>
@@ -19,13 +19,13 @@ namespace JoinVsOrderedPairing.Extensions
         /// </typeparam>
         /// <param name="left">Left elements</param>
         /// <param name="right">Right elements</param>
-        /// <param name="leftKeyExtractor">Left key extractor function</param>
-        /// <param name="rightKeyExtractor">Right key extractor function</param>
+        /// <param name="leftKeySelector">Left key selector function</param>
+        /// <param name="rightKeySelector">Right key selector function</param>
         /// <returns>The paired elements</returns>
         public static IEnumerable<Result> PairSelectOnOrderedInputs<Left, Right, Key, Result>(
             this IEnumerable<Left> left, IEnumerable<Right> right,
-            Func<Left, Key> leftKeyExtractor,
-            Func<Right, Key> rightKeyExtractor,
+            Func<Left, Key> leftKeySelector,
+            Func<Right, Key> rightKeySelector,
             Func<Left, Right, Result> resultSelector)
             where Key : IComparable<Key>
         {
@@ -37,8 +37,8 @@ namespace JoinVsOrderedPairing.Extensions
             Left LeftElement() => leftEnumerator.Current;
             Right RightElement() => rightEnumerator.Current;
 
-            Key LeftKey() => leftKeyExtractor(LeftElement());
-            Key RightKey() => rightKeyExtractor(RightElement());
+            Key LeftKey() => leftKeySelector(LeftElement());
+            Key RightKey() => rightKeySelector(RightElement());
 
             var continuePairing = true;
 
@@ -78,12 +78,12 @@ namespace JoinVsOrderedPairing.Extensions
 
         public static IEnumerable<Result> PairSelect<Left, Right, Key, Result>(
             this IEnumerable<Left> left, IEnumerable<Right> right,
-            Func<Left, Key> leftKeyExtractor,
-            Func<Right, Key> rightKeyExtractor,
+            Func<Left, Key> leftKeySelector,
+            Func<Right, Key> rightKeySelector,
             Func<Left, Right, Result> resultSelector)
             where Key : IComparable<Key>
             => left.OrderBy(x => x).PairSelectOnOrderedInputs(right.OrderBy(x => x),
-                leftKeyExtractor, rightKeyExtractor, resultSelector);
+                leftKeySelector, rightKeySelector, resultSelector);
 
         public static IEnumerable<(T, T)> Pair<T>(this IEnumerable<T> left, IEnumerable<T> right)
             where T : IComparable<T>
@@ -91,11 +91,11 @@ namespace JoinVsOrderedPairing.Extensions
 
         public static IEnumerable<Result> JoinSelect<Left, Right, Key, Result>(
             this IEnumerable<Left> left, IEnumerable<Right> right,
-            Func<Left, Key> leftKeyExtractor,
-            Func<Right, Key> rightKeyExtractor,
+            Func<Left, Key> leftKeySelector,
+            Func<Right, Key> rightKeySelector,
             Func<Left, Right, Result> resultSelector)
             where Key : IComparable<Key>
-            => left.Join(right, leftKeyExtractor, rightKeyExtractor, resultSelector);
+            => left.Join(right, leftKeySelector, rightKeySelector, resultSelector);
 
         public static IEnumerable<(T, T)> JoinPair<T>(this IEnumerable<T> left, IEnumerable<T> right)
             where T : IComparable<T>
