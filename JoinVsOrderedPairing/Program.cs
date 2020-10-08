@@ -8,8 +8,11 @@ namespace JoinVsOrderedPairing
 {
     class Program
     {
-        static IEnumerable<int> GenerateLeft() => Enumerable.Range(0, 1 << 25);
-        static IEnumerable<int> GenerateRight() => GenerateLeft();
+        //static IEnumerable<int> GenerateLeft() => Enumerable.Range(0, 1 << 25);
+        //static IEnumerable<int> GenerateRight() => GenerateLeft();
+
+        static IEnumerable<int> GenerateLeft() => Enumerable.Range(0, 4);
+        static IEnumerable<int> GenerateRight() => new[] { 0, 2 };
 
         static void Measure(Action action, string caption)
         {
@@ -36,7 +39,19 @@ namespace JoinVsOrderedPairing
 
         static void Main(string[] args)
         {
-            Benchmark(GenerateLeft, GenerateRight);
+            //Benchmark(GenerateLeft, GenerateRight);
+
+            var lazyPairing = GenerateLeft().PairSelectOnOrderedInputsLazy(
+                GenerateRight(),
+                x => x,
+                x => x,
+                (l, r) => (l, r));
+
+            Console.WriteLine($"Doing something after pairing?");
+
+            lazyPairing
+                .Select(p => 2 * p.l)
+                .ToList();
         }
     }
 }
