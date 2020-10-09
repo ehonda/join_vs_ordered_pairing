@@ -6,53 +6,6 @@ namespace JoinVsOrderedPairing.Extensions
 {
     public static class IEnumerableExtensions
     {
-        public static IEnumerable<Result> PairSelectOnOrderedInputsLazy<Left, Right, Key, Result>(
-            this IEnumerable<Left> left, IEnumerable<Right> right,
-            Func<Left, Key> leftKeySelector,
-            Func<Right, Key> rightKeySelector,
-            Func<Left, Right, Result> resultSelector)
-            where Key : IComparable<Key>
-        {
-            // TODO: - Add null guards
-            //       - Return inner function executing the algorithm, so the null guards
-            //         apply on call and not on first yield
-            #region DSL Setup
-
-            var rightEnumerator = right.GetEnumerator();
-            Right RightElement() => rightEnumerator.Current;
-            Key RightKey() => rightKeySelector(RightElement());
-
-            var continuePairing = true;
-
-            bool RightEnumeratorMightCatchUp(Key leftKey) => 
-                continuePairing && RightKey().IsLowerThan(leftKey);
-            void AdvanceRight() => continuePairing &= rightEnumerator.MoveNext();
-
-            bool PairingFound(Key leftKey) => continuePairing && leftKey.IsEqualTo(RightKey());
-
-            #endregion
-
-            #region Algorithm
-
-            AdvanceRight();
-            foreach (var leftElement in left)
-            {
-                if (!continuePairing)
-                    break;
-
-                var leftKey = leftKeySelector(leftElement);
-                if (PairingFound(leftKey))
-                    yield return resultSelector(leftElement, RightElement());
-
-                while (RightEnumeratorMightCatchUp(leftKey))
-                    AdvanceRight();
-            }
-
-            yield break;
-
-            #endregion
-        }
-
         /// <summary>
         /// Pairs elements in <paramref name="left"/> with matching elements
         /// in <paramref name="right"/>, by comparison on keys extract with
@@ -76,6 +29,9 @@ namespace JoinVsOrderedPairing.Extensions
             Func<Left, Right, Result> resultSelector)
             where Key : IComparable<Key>
         {
+            // TODO: - Add null guards
+            //       - Return inner function executing the algorithm, so the null guards
+            //         apply on call and not on first yield
             #region DSL Setup
 
             var leftEnumerator = left.GetEnumerator();
@@ -103,12 +59,11 @@ namespace JoinVsOrderedPairing.Extensions
             #region Algorithm
 
             AdvanceBoth();
-            var paired = new List<Result>();
             while (continuePairing)
             {
                 if (PairingFound())
                 {
-                    paired.Add(resultSelector(LeftElement(), RightElement()));
+                    yield return resultSelector(LeftElement(), RightElement());
                     AdvanceBoth();
                 }
 
@@ -118,7 +73,7 @@ namespace JoinVsOrderedPairing.Extensions
                 while (RightEnumeratorMightCatchUp())
                     AdvanceRight();
             }
-            return paired;
+            yield break;
 
             #endregion
         }

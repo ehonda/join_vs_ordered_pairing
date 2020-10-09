@@ -41,17 +41,46 @@ namespace JoinVsOrderedPairing
         {
             //Benchmark(GenerateLeft, GenerateRight);
 
-            var lazyPairing = GenerateLeft().PairSelectOnOrderedInputsLazy(
-                GenerateRight(),
-                x => x,
-                x => x,
-                (l, r) => (l, r));
+            //var lazyPairing = GenerateLeft().PairSelectOnOrderedInputsLazy(
+            //    GenerateRight(),
+            //    x => x,
+            //    x => x,
+            //    (l, r) => (l, r));
 
-            Console.WriteLine($"Doing something after pairing?");
+            //Console.WriteLine($"Doing something after pairing?");
 
-            lazyPairing
-                .Select(p => 2 * p.l)
-                .ToList();
+            //lazyPairing
+            //    .Select(p => 2 * p.l)
+            //    .ToList();
+
+            //// Lazy eval
+            //var numbers = new[] { 0, 1, 2 };
+            //var modified = numbers
+            //    .Select(n => { Console.WriteLine($"First Eval: {n}"); return n; })
+            //    .Select(n => { Console.WriteLine($"Second Eval: {n}"); return n; });
+
+            //foreach (var n in modified)
+            //    Console.WriteLine($"Number is {n}");
+
+            //// ToList in between
+            //var numbers = new[] { 0, 1, 2 };
+            //var modified = numbers
+            //    .Select(n => { Console.WriteLine($"First Eval: {n}"); return n; })
+            //    .ToList()
+            //    .Select(n => { Console.WriteLine($"Second Eval: {n}"); return n; });
+
+            //foreach (var n in modified)
+            //    Console.WriteLine($"Number is {n}");
+
+            // Order by in between
+            //var numbers = new[] { 0, 1, 2 };
+            //var modified = numbers
+            //    .Select(n => { Console.WriteLine($"First Eval: {n}"); return n; })
+            //    .OrderBy(n => n)
+            //    .Select(n => { Console.WriteLine($"Second Eval: {n}"); return n; });
+
+            //foreach (var n in modified)
+            //    Console.WriteLine($"Number is {n}");
         }
     }
 }
