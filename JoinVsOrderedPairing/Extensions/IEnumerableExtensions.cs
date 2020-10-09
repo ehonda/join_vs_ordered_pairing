@@ -7,21 +7,37 @@ namespace JoinVsOrderedPairing.Extensions
     public static class IEnumerableExtensions
     {
         /// <summary>
-        /// Pairs elements in <paramref name="left"/> with matching elements
-        /// in <paramref name="right"/>, by comparison on keys extract with
+        /// Pairs and projects elements in <paramref name="left"/> with matching elements
+        /// in <paramref name="right"/>, by comparison on keys extracted with
         /// <paramref name="leftKeySelector"/> and <paramref name="rightKeySelector"/>.
-        /// Inputs must be sorted on these keys.
+        /// Inputs must be sorted on these keys. The result elements are retrieved by
+        /// projecting the paired up elements via <paramref name="resultSelector"/>.
         /// </summary>
-        /// <typeparam name="Left">Type of left elements</typeparam>
-        /// <typeparam name="Right">Type of right elements</typeparam>
+        /// <typeparam name="Left">Type of left elements.</typeparam>
+        /// <typeparam name="Right">Type of right elements.</typeparam>
         /// <typeparam name="Key">
-        ///     Type of keys to compare, must implement <see cref="IComparable{Key}"/>
+        ///     Type of keys to compare, must implement <see cref="IComparable{Key}"/>.
         /// </typeparam>
-        /// <param name="left">Left elements</param>
-        /// <param name="right">Right elements</param>
-        /// <param name="leftKeySelector">Left key selector function</param>
-        /// <param name="rightKeySelector">Right key selector function</param>
-        /// <returns>The paired elements</returns>
+        /// <typeparam name="Result">Type of result elements.</typeparam>
+        /// <param name="left"><typeparamref name="Left"/> elements.</param>
+        /// <param name="right"><typeparamref name="Right"/> elements.</param>
+        /// <param name="leftKeySelector">
+        ///     Function to project elements of type <typeparamref name="Left"/>
+        ///     onto their corresponding <typeparamref name="Key"/>.
+        /// </param>
+        /// <param name="rightKeySelector">
+        ///     Function to project elements of type <typeparamref name="Right"/>
+        ///     onto their corresponding <typeparamref name="Key"/>.
+        /// </param>
+        /// <param name="resultSelector">
+        ///     Function to project paired elements of type
+        ///     (<typeparamref name="Left"/>, <typeparamref name="Right"/>)
+        ///     onto a result element of type <typeparamref name="Result"/>.
+        /// </param>
+        /// <returns>
+        ///     The <typeparamref name="Result"/> elements retrieved by
+        ///     projecting paired up elements from the input sequences.
+        /// </returns>
         public static IEnumerable<Result> PairSelectOnOrderedInputs<Left, Right, Key, Result>(
             this IEnumerable<Left> left, IEnumerable<Right> right,
             Func<Left, Key> leftKeySelector,
