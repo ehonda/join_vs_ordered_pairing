@@ -5,7 +5,17 @@ using System.Collections.Generic;
 
 namespace JoinVsOrderedPairingTest.Tests
 {
-    [TestFixture]
+    public static class Functions
+    {
+        public static Func<int, int> Identity() => x => x;
+        public static Func<(int, int), int> First() => pair => pair.Item1;
+    }
+
+    //[TestFixture(typeof(int), typeof(int), typeof(int), typeof(int), 
+    //    new Func<int, int>(x => x),
+    //    new Func<int, int>(x => x),
+    //    new Func<int, int>((l, r) => l)]
+    //[TestFixture(Functions.Identity(), Functions.Identity(), Functions.First())]
     public class PairTestFixture<Left, Right, Key, Result>
         where Key : IComparable<Key>
     {
@@ -25,7 +35,7 @@ namespace JoinVsOrderedPairingTest.Tests
             _resultSelector = resultSelector;
         }
 
-        private IEnumerable<Result> PairSelectResult() => 
+        protected IEnumerable<Result> PairSelectResult() => 
             _left.PairSelect(_right, _leftKeySelector, _rightKeySelector, _resultSelector);
 
         protected void ExpectNumberOfResults(int expectedCount)
@@ -46,7 +56,5 @@ namespace JoinVsOrderedPairingTest.Tests
             _left = new List<Left>();
             _right = new List<Right>();
         }
-
-        // TODO: null tests
     }
 }

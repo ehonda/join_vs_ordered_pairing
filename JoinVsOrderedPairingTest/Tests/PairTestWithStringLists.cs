@@ -1,4 +1,7 @@
+using JoinVsOrderedPairing.Extensions;
 using NUnit.Framework;
+using System;
+using System.Linq;
 
 namespace JoinVsOrderedPairingTest.Tests
 {
@@ -11,7 +14,13 @@ namespace JoinVsOrderedPairingTest.Tests
         {
         }
 
-        // TODO: null tests
+        // TODO: The null tests should be in the base class / generic
+        [Test]
+        public void Null_On_Right_Throws()
+        {
+            _right = null;
+            Assert.Throws<ArgumentNullException>(() => PairSelectResult().ToList());
+        }
 
         [Test]
         public void If_One_List_Is_Empty_The_Result_Is_Empty()

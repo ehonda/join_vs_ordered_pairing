@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Ardalis.GuardClauses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -45,9 +46,12 @@ namespace JoinVsOrderedPairing.Extensions
             Func<Left, Right, Result> resultSelector)
             where Key : IComparable<Key>
         {
-            // TODO: - Add null guards
-            //       - Return inner function executing the algorithm, so the null guards
-            //         apply on call and not on first yield
+            Guard.Against.Null(left, "left");
+            Guard.Against.Null(right, "right");
+            Guard.Against.Null(leftKeySelector, "leftKeySelector");
+            Guard.Against.Null(rightKeySelector, "rightKeySelector");
+            Guard.Against.Null(resultSelector, "resultSelector");
+
             #region DSL Setup
 
             var leftEnumerator = left.GetEnumerator();
@@ -74,22 +78,27 @@ namespace JoinVsOrderedPairing.Extensions
 
             #region Algorithm
 
-            AdvanceBoth();
-            while (continuePairing)
+            return Pairs();
+
+            IEnumerable<Result> Pairs()
             {
-                if (PairingFound())
+                AdvanceBoth();
+                while (continuePairing)
                 {
-                    yield return resultSelector(LeftElement(), RightElement());
-                    AdvanceBoth();
+                    if (PairingFound())
+                    {
+                        yield return resultSelector(LeftElement(), RightElement());
+                        AdvanceBoth();
+                    }
+
+                    while (LeftEnumeratorMightCatchUp())
+                        AdvanceLeft();
+
+                    while (RightEnumeratorMightCatchUp())
+                        AdvanceRight();
                 }
-
-                while (LeftEnumeratorMightCatchUp())
-                    AdvanceLeft();
-
-                while (RightEnumeratorMightCatchUp())
-                    AdvanceRight();
+                yield break;
             }
-            yield break;
 
             #endregion
         }

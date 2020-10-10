@@ -9,4 +9,8 @@
     <DocumentationFile>C:\Users\dennis\source\repos\test_projects\JoinVsOrderedPairing\JoinVsOrderedPairing\JoinVsOrderedPairing.xml</DocumentationFile>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Ardalis.GuardClauses" Version="3.0.0" />
+  </ItemGroup>
+
 </Project>
