@@ -1,4 +1,5 @@
 ﻿using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Diagnostics.Windows.Configs;
 using BenchmarkDotNet.Engines;
 using JoinVsOrderedPairing.Extensions;
 using System;
@@ -7,7 +8,8 @@ using System.Linq;
 
 namespace JoinVsOrderedPairingBenchmark.Benchmarks
 {
-    [RPlotExporter]
+    //[RPlotExporter]
+    //[InliningDiagnoser(false, true)]
     public class VsJoin
     {
         private IEnumerable<int> _left;
@@ -19,7 +21,8 @@ namespace JoinVsOrderedPairingBenchmark.Benchmarks
         private readonly Consumer _consumer = new Consumer();
 
 
-        [Params(10000, 100000)]
+        //[Params(1 << 20, 1 << 21, 1 << 22, 1 << 23)]
+        [Params(10000)]
         public int Length;
 
         [GlobalSetup]
@@ -37,9 +40,14 @@ namespace JoinVsOrderedPairingBenchmark.Benchmarks
             .PairSelect(_right, _leftKeySelector, _rightKeySelector, _resultKeySelector)
             .Consume(_consumer);
 
-        [Benchmark(Baseline = true)]
+        [Benchmark]
         public void JoinPairing() => _left
             .JoinSelect(_right, _leftKeySelector, _rightKeySelector, _resultKeySelector)
+            .Consume(_consumer);
+
+        [Benchmark(Baseline = true)]
+        public void NaivePairing() => _left
+            .PairSelectNaive(_right, _leftKeySelector, _rightKeySelector, _resultKeySelector)
             .Consume(_consumer);
     }
 }

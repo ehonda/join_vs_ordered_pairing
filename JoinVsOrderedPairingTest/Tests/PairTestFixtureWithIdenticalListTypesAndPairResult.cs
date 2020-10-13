@@ -13,8 +13,15 @@ namespace JoinVsOrderedPairingTest.Tests
         private readonly Func<(T, T), (T, T), bool> _pairComparator;
 
         public PairTestFixtureWithIdenticalListTypesAndPairResult(
-            Func<T, Key> keySelector)
-            : base(keySelector, keySelector, (l, r) => (l, r))
+            Func<T, Key> keySelector,
+            Func<
+                IEnumerable<T>,
+                IEnumerable<T>,
+                Func<T, Key>,
+                Func<T, Key>,
+                Func<T, T, (T, T)>,
+                IEnumerable<(T, T)>> pairSelect)
+            : base(keySelector, keySelector, (l, r) => (l, r), pairSelect)
         {
             _pairComparator = (p, q) =>
                 keySelector(p.Item1).IsEqualTo(keySelector(q.Item1))

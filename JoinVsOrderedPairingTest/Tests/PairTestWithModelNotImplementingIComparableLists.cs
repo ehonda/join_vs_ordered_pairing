@@ -1,6 +1,7 @@
 ﻿using JoinVsOrderedPairingTest.Models;
 using NUnit.Framework;
-
+using System;
+using System.Collections.Generic;
 using Key = System.Int32; // origin: ModelNotImplementingIComparable.cs
 
 namespace JoinVsOrderedPairingTest.Tests
@@ -9,8 +10,16 @@ namespace JoinVsOrderedPairingTest.Tests
     public class PairTestWithModelNotImplementingIComparableLists
         : PairTestFixtureWithIdenticalListTypesAndPairResult<ModelNotImplementingIComparable, Key>
     {
-        public PairTestWithModelNotImplementingIComparableLists()
-            : base(x => x.Key)
+        public PairTestWithModelNotImplementingIComparableLists(
+            Func<
+                IEnumerable<ModelNotImplementingIComparable>,
+                IEnumerable<ModelNotImplementingIComparable>,
+                Func<ModelNotImplementingIComparable, Key>,
+                Func<ModelNotImplementingIComparable, Key>,
+                Func<ModelNotImplementingIComparable, ModelNotImplementingIComparable, 
+                    (ModelNotImplementingIComparable, ModelNotImplementingIComparable)>,
+                IEnumerable<(ModelNotImplementingIComparable, ModelNotImplementingIComparable)>> pairSelect)
+            : base(x => x.Key, pairSelect)
         {
         }
 

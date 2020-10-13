@@ -1,16 +1,25 @@
-using JoinVsOrderedPairing.Extensions;
+using JoinVsOrderedPairingTest.Implementations;
 using NUnit.Framework;
 using System;
 using System.Linq;
 
+using PairSelector = System.Func<
+                System.Collections.Generic.IEnumerable<string>,
+                System.Collections.Generic.IEnumerable<string>,
+                System.Func<string, string>,
+                System.Func<string, string>,
+                System.Func<string, string, (string, string)>,
+                System.Collections.Generic.IEnumerable<(string, string)>>;
+
 namespace JoinVsOrderedPairingTest.Tests
 {
-    [TestFixture]
+    [TestFixtureSource(typeof(PairSelectImplementations), "Implementations")]
     public class PairTestWithStringLists
         : PairTestFixtureWithIdenticalListTypesAndPairResult<string, string>
     {
-        public PairTestWithStringLists()
-            : base(x => x)
+        public PairTestWithStringLists(
+            PairSelector pairSelect)
+            : base(x => x, pairSelect)
         {
         }
 

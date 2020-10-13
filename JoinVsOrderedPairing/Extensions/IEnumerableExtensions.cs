@@ -7,6 +7,8 @@ namespace JoinVsOrderedPairing.Extensions
 {
     public static class IEnumerableExtensions
     {
+        #region Pair select on ordered inputs
+
         /// <summary>
         /// Pairs and projects elements in <paramref name="left"/> with matching elements
         /// in <paramref name="right"/>, by comparison on keys extracted with
@@ -117,6 +119,10 @@ namespace JoinVsOrderedPairing.Extensions
             where T : IComparable<T>
             => left.PairSelectOnOrderedInputs(right, x => x, x => x, (left, right) => (left, right));
 
+        #endregion
+
+        #region Pair select via join
+
         public static IEnumerable<Result> JoinSelect<Left, Right, Key, Result>(
             this IEnumerable<Left> left, IEnumerable<Right> right,
             Func<Left, Key> leftKeySelector,
@@ -128,5 +134,28 @@ namespace JoinVsOrderedPairing.Extensions
         public static IEnumerable<(T, T)> JoinPair<T>(this IEnumerable<T> left, IEnumerable<T> right)
             where T : IComparable<T>
             => left.JoinSelect(right, x => x, x => x, (left, right) => (left, right));
+
+        #endregion
+
+        #region Pair select naive implementation
+
+        public static IEnumerable<Result> PairSelectNaive<Left, Right, Key, Result>(
+            this IEnumerable<Left> left, IEnumerable<Right> right,
+            Func<Left, Key> leftKeySelector,
+            Func<Right, Key> rightKeySelector,
+            Func<Left, Right, Result> resultSelector)
+            where Key : IComparable<Key>
+        {
+            foreach (var leftElement in left)
+                foreach (var rightElement in right)
+                    if (leftKeySelector(leftElement).IsEqualTo(rightKeySelector(rightElement)))
+                    {
+                        yield return resultSelector(leftElement, rightElement);
+                        break;
+                    }
+            yield break;
+        }
+
+        #endregion
     }
 }
