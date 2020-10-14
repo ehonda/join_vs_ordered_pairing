@@ -1,11 +1,24 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections;
 using System.Collections.Generic;
+
+
+// The type of our pair selector function. We would really like to do
+//      using PairSelector<Left, Right, Key, Result> = ...
+// but this is unfortunately not legal C# since type alias using directives
+// can't have type parmeters, see 
+//      https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/namespaces#using-directives
+//
+//  Func<
+//      IEnumerable<Left>,
+//      IEnumerable<Right>,
+//      Func<Left, Key>,
+//      Func<Right, Key>,
+//      Func<Left, Right, Result>,
+//      IEnumerable<Result>>
 
 namespace JoinVsOrderedPairingTest.Tests
 {
-    //[TestFixtureSource(typeof(PairSelectImplementations))]
     public class PairTestFixture<Left, Right, Key, Result>
         where Key : IComparable<Key>
     {
@@ -14,7 +27,7 @@ namespace JoinVsOrderedPairingTest.Tests
         private readonly Func<Left, Key> _leftKeySelector;
         private readonly Func<Right, Key> _rightKeySelector;
         private readonly Func<Left, Right, Result> _resultSelector;
-        private readonly Func<
+        private Func<
             IEnumerable<Left>,
             IEnumerable<Right>,
             Func<Left, Key>,
@@ -25,19 +38,11 @@ namespace JoinVsOrderedPairingTest.Tests
         public PairTestFixture(
             Func<Left, Key> leftKeySelector, 
             Func<Right, Key> rightKeySelector,
-            Func<Left, Right, Result> resultSelector,
-            Func<
-                IEnumerable<Left>,
-                IEnumerable<Right>,
-                Func<Left, Key>,
-                Func<Right, Key>,
-                Func<Left, Right, Result>,
-                IEnumerable<Result>> pairSelect)
+            Func<Left, Right, Result> resultSelector)
         {
             _leftKeySelector = leftKeySelector;
             _rightKeySelector = rightKeySelector;
             _resultSelector = resultSelector;
-            _pairSelect = pairSelect;
         }
 
         protected IEnumerable<Result> PairSelectResult() =>
@@ -55,6 +60,20 @@ namespace JoinVsOrderedPairingTest.Tests
             int expectedCount, Result expectedResult, Func<Result, Result, bool> resultComparator)
             => Assert.That(PairSelectResult(), Has.Exactly(expectedCount).Items.Matches<Result>(
                 result => resultComparator(result, expectedResult)));
+
+        protected void TestWithPairSelect(
+            Func<
+                IEnumerable<Left>,
+                IEnumerable<Right>,
+                Func<Left, Key>,
+                Func<Right, Key>,
+                Func<Left, Right, Result>,
+                IEnumerable<Result>> pairSelect,
+            Action test)
+        {
+            _pairSelect = pairSelect;
+            test();
+        }
 
         [SetUp]
         public void SetUp()
