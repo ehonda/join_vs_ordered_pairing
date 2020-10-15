@@ -33,6 +33,7 @@ namespace JoinVsOrderedPairingTest.Tests
         [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
         [TestCaseSource(typeof(PairSelectImplementations), "Join")]
         [TestCaseSource(typeof(PairSelectImplementations), "Naive")]
+        [TestCaseSource(typeof(PairSelectImplementations), "ManuallyInlined")]
         public void If_One_List_Is_Empty_The_Result_Is_Empty(PairSelector implementation)
             => TestWithImplementationAndWithSymmetricalSetups(implementation, (first, second) =>
             {
@@ -43,6 +44,7 @@ namespace JoinVsOrderedPairingTest.Tests
         [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
         [TestCaseSource(typeof(PairSelectImplementations), "Join")]
         [TestCaseSource(typeof(PairSelectImplementations), "Naive")]
+        [TestCaseSource(typeof(PairSelectImplementations), "ManuallyInlined")]
         public void One_Pair_At_The_Same_Position_Is_Returned(PairSelector implementation)
             => TestWithPairSelect(implementation, () =>
                 {
@@ -55,6 +57,7 @@ namespace JoinVsOrderedPairingTest.Tests
         [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
         [TestCaseSource(typeof(PairSelectImplementations), "Join")]
         [TestCaseSource(typeof(PairSelectImplementations), "Naive")]
+        [TestCaseSource(typeof(PairSelectImplementations), "ManuallyInlined")]
         public void One_Pair_At_Different_Positions_Is_Returned(PairSelector implementation)
             => TestWithImplementationAndWithSymmetricalSetups(implementation, (first, second) =>
             {
@@ -66,6 +69,7 @@ namespace JoinVsOrderedPairingTest.Tests
 
         [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
         [TestCaseSource(typeof(PairSelectImplementations), "Naive")]
+        [TestCaseSource(typeof(PairSelectImplementations), "ManuallyInlined")]
         public void Duplicate_Elements_Get_Paired_With_Other_Duplicates(PairSelector implementation)
             => TestWithPairSelect(implementation, () =>
                 {
@@ -76,6 +80,7 @@ namespace JoinVsOrderedPairingTest.Tests
                 });
 
         [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
+        [TestCaseSource(typeof(PairSelectImplementations), "ManuallyInlined")]
         public void Number_Of_Duplicate_Pairs_Is_The_Min_Of_Left_And_Right_Duplicates(PairSelector implementation)
             => TestWithImplementationAndWithSymmetricalSetups(implementation, (first, second) =>
             {
@@ -83,6 +88,22 @@ namespace JoinVsOrderedPairingTest.Tests
                 second.AddRange(new[] { "A", "A" });
                 ExpectNumberOfPairs(1);
                 ExpectExactlyOnePairOf(("A", "A"));
+            });
+
+        // This is a regression test: ManuallyInlined did previously not
+        // sort it's lists before, which caused pairings to be skipped.
+        [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
+        [TestCaseSource(typeof(PairSelectImplementations), "Join")]
+        [TestCaseSource(typeof(PairSelectImplementations), "Naive")]
+        [TestCaseSource(typeof(PairSelectImplementations), "ManuallyInlined")]
+        public void Works_On_Unordered_Inputs(PairSelector implementation)
+            => TestWithImplementationAndWithSymmetricalSetups(implementation, (first, second) =>
+            {
+                first.AddRange(new[] { "A", "B" });
+                second.AddRange(new[] { "B", "A" });
+                ExpectNumberOfPairs(2);
+                ExpectExactlyOnePairOf(("A", "A"));
+                ExpectExactlyOnePairOf(("B", "B"));
             });
     }
 }

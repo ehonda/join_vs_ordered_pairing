@@ -43,5 +43,15 @@ namespace JoinVsOrderedPairingTest.Implementations.PairTestWithModelNotImplement
                         => left.PairSelectNaive(right, leftKeySelector, rightKeySelector, resultSelector));
             }
         }
+
+        public static IEnumerable<PairSelector> ManuallyInlined
+        {
+            get
+            {
+                yield return new PairSelector(
+                    (left, right, leftKeySelector, rightKeySelector, resultSelector)
+                        => left.PairSelectManuallyInlined(right, leftKeySelector, rightKeySelector, resultSelector));
+            }
+        }
     }
 }

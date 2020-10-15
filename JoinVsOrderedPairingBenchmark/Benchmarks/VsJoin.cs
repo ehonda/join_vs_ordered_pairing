@@ -49,5 +49,10 @@ namespace JoinVsOrderedPairingBenchmark.Benchmarks
         public void NaivePairing() => _left
             .PairSelectNaive(_right, _leftKeySelector, _rightKeySelector, _resultKeySelector)
             .Consume(_consumer);
+
+        [Benchmark]
+        public void ManuallyInlined() => _left
+            .PairSelectManuallyInlined(_right, _leftKeySelector, _rightKeySelector, _resultKeySelector)
+            .Consume(_consumer);
     }
 }

@@ -34,6 +34,7 @@ namespace JoinVsOrderedPairingTest.Tests
         [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
         [TestCaseSource(typeof(PairSelectImplementations), "Join")]
         [TestCaseSource(typeof(PairSelectImplementations), "Naive")]
+        [TestCaseSource(typeof(PairSelectImplementations), "ManuallyInlined")]
         public void Models_Not_Implementing_IComparable_Get_Sorted_And_Compared_Via_Key_Selector(PairSelector implementation)
             => TestWithImplementationAndWithSymmetricalSetups(implementation, (first, second) =>
             {

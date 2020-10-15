@@ -157,5 +157,63 @@ namespace JoinVsOrderedPairing.Extensions
         }
 
         #endregion
+
+        #region Manually inlined
+
+        public static IEnumerable<Result> PairSelectManuallyInlinedOnOrderedInputs
+            <Left, Right, Key, Result>(
+                this IEnumerable<Left> left, IEnumerable<Right> right,
+                Func<Left, Key> leftKeySelector,
+                Func<Right, Key> rightKeySelector,
+                Func<Left, Right, Result> resultSelector)
+            where Key : IComparable<Key>
+        {
+            #region Algorithm
+
+            return Pairs();
+
+            IEnumerable<Result> Pairs()
+            {
+                var continuePairing = true;
+
+                var leftEnumerator = left.GetEnumerator();
+                var rightEnumerator = right.GetEnumerator();
+
+                continuePairing &= leftEnumerator.MoveNext();
+                continuePairing &= rightEnumerator.MoveNext();
+                while (continuePairing)
+                {
+                    if (continuePairing && leftKeySelector(leftEnumerator.Current)
+                        .CompareTo(rightKeySelector(rightEnumerator.Current)) == 0)
+                    {
+                        yield return resultSelector(leftEnumerator.Current, rightEnumerator.Current);
+                        continuePairing &= leftEnumerator.MoveNext();
+                        continuePairing &= rightEnumerator.MoveNext();
+                    }
+
+                    while (continuePairing && leftKeySelector(leftEnumerator.Current)
+                        .CompareTo(rightKeySelector(rightEnumerator.Current)) == -1)
+                        continuePairing &= leftEnumerator.MoveNext();
+
+                    while (continuePairing && rightKeySelector(rightEnumerator.Current)
+                        .CompareTo(leftKeySelector(leftEnumerator.Current)) == -1)
+                        continuePairing &= rightEnumerator.MoveNext();
+                }
+                yield break;
+            }
+
+            #endregion
+        }
+
+        public static IEnumerable<Result> PairSelectManuallyInlined<Left, Right, Key, Result>(
+            this IEnumerable<Left> left, IEnumerable<Right> right,
+            Func<Left, Key> leftKeySelector,
+            Func<Right, Key> rightKeySelector,
+            Func<Left, Right, Result> resultSelector)
+            where Key : IComparable<Key>
+            => left.OrderBy(leftKeySelector).PairSelectManuallyInlinedOnOrderedInputs(
+                right.OrderBy(rightKeySelector), leftKeySelector, rightKeySelector, resultSelector);
+
+        #endregion
     }
 }
