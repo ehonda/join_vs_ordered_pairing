@@ -1,4 +1,4 @@
-using JoinVsOrderedPairingTest.Implementations;
+using JoinVsOrderedPairingTest.Implementations.PairTestWithStringLists;
 using NUnit.Framework;
 using System;
 using System.Linq;
@@ -13,6 +13,7 @@ using PairSelector = System.Func<
 
 namespace JoinVsOrderedPairingTest.Tests
 {
+    [TestFixture]
     public class PairTestWithStringLists
         : PairTestFixtureWithIdenticalListTypesAndPairResult<string, string>
     {

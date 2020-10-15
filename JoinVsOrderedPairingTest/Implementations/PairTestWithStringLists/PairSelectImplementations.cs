@@ -9,7 +9,7 @@ using PairSelector = System.Func<
                 System.Func<string, string, (string, string)>,
                 System.Collections.Generic.IEnumerable<(string, string)>>;
 
-namespace JoinVsOrderedPairingTest.Implementations
+namespace JoinVsOrderedPairingTest.Implementations.PairTestWithStringLists
 {
     public class PairSelectImplementations
     {
