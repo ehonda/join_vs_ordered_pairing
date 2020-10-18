@@ -19,14 +19,13 @@ namespace JoinVsOrderedPairingTest.TestData
                 .Zip(Enumerable.Repeat(FailureMessage(Length), Length));
 
         private static string FailureMessage(int m)
-            => $"Probability to have all of these {m} index tests to " +
-            // Using the lower line causes tests not to be run in visual studio
-            $"succeed is (1 - 1 / {Length} ^ {Tries} ^ {m} ~= {FailureProbability(m)}.";
-          //$"succeed is (1 - 1 / {Length} ^ {Tries}) ^ {m} ~= {FailureProbability(m)}.";
+            => $"Probability to have all of these {m} index tests " +
+            $"succeed is {FailureProbabilityFormula(m)} ~= {FailureProbability(m)}.";
 
-
-        //private static string FailureProbabilityFormula(int m)
-        //    => $"(1 - 1 / {Length} ^ {Tries}) ^ {m}";
+        // We are using angular brackets here because of a really
+        // weird bug we hit - see branch "wtf-failure-message-vs-test-bug"
+        private static string FailureProbabilityFormula(int m)
+            => $"[1 - 1 / {Length} ^ {Tries}] ^ {m}";
 
         // p(l, n, m) = (1 - 1 / l ^ n) ^ m
         // with
