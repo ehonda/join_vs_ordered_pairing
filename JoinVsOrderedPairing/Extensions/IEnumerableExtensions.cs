@@ -7,6 +7,8 @@ namespace JoinVsOrderedPairing.Extensions
 {
     public static class IEnumerableExtensions
     {
+        #region PairSelect implementations
+
         #region Pair select on ordered inputs
 
         /// <summary>
@@ -213,6 +215,8 @@ namespace JoinVsOrderedPairing.Extensions
             where Key : IComparable<Key>
             => left.OrderBy(leftKeySelector).PairSelectManuallyInlinedOnOrderedInputs(
                 right.OrderBy(rightKeySelector), leftKeySelector, rightKeySelector, resultSelector);
+
+        #endregion
 
         #endregion
     }

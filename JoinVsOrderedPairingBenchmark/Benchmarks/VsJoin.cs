@@ -8,8 +8,10 @@ using System.Linq;
 
 namespace JoinVsOrderedPairingBenchmark.Benchmarks
 {
-    //[RPlotExporter]
+    [RPlotExporter]
     //[InliningDiagnoser(false, true)]
+    [MemoryDiagnoser]
+    [CsvMeasurementsExporter]
     public class VsJoin
     {
         private IEnumerable<int> _left;
@@ -20,9 +22,9 @@ namespace JoinVsOrderedPairingBenchmark.Benchmarks
 
         private readonly Consumer _consumer = new Consumer();
 
-
-        //[Params(1 << 20, 1 << 21, 1 << 22, 1 << 23)]
-        [Params(10000)]
+        //[Params(1 << 13, 1 << 16/*, 1 << 19*/)]
+        //[Params(100, 1000, 10000)]
+        [Params(50000)]
         public int Length;
 
         [GlobalSetup]
@@ -45,7 +47,8 @@ namespace JoinVsOrderedPairingBenchmark.Benchmarks
             .JoinSelect(_right, _leftKeySelector, _rightKeySelector, _resultKeySelector)
             .Consume(_consumer);
 
-        [Benchmark(Baseline = true)]
+        //[Benchmark(Baseline = true)]
+        [Benchmark]
         public void NaivePairing() => _left
             .PairSelectNaive(_right, _leftKeySelector, _rightKeySelector, _resultKeySelector)
             .Consume(_consumer);

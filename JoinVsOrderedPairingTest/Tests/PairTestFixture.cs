@@ -48,7 +48,6 @@ namespace JoinVsOrderedPairingTest.Tests
         protected IEnumerable<Result> PairSelectResult() =>
             _pairSelect(_left, _right, _leftKeySelector, _rightKeySelector, _resultSelector);
 
-
         protected void ExpectNumberOfResults(int expectedCount)
             => Assert.That(PairSelectResult(), Has.Exactly(expectedCount).Items);
 

@@ -1,3 +1,4 @@
+using JoinVsOrderedPairing.Extensions;
 using JoinVsOrderedPairingTest.Implementations.PairTestWithStringLists;
 using NUnit.Framework;
 using System;
@@ -104,6 +105,29 @@ namespace JoinVsOrderedPairingTest.Tests
                 ExpectNumberOfPairs(2);
                 ExpectExactlyOnePairOf(("A", "A"));
                 ExpectExactlyOnePairOf(("B", "B"));
+            });
+
+        [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
+        [TestCaseSource(typeof(PairSelectImplementations), "Join")]
+        [TestCaseSource(typeof(PairSelectImplementations), "Naive")]
+        [TestCaseSource(typeof(PairSelectImplementations), "ManuallyInlined")]
+        public void Implementation_Gives_Same_Result_As_Naive_On_Distinct_Shuffled_Input_List(
+            PairSelector implementation)
+            => TestWithImplementationAndWithSymmetricalSetups(implementation, (first, second) =>
+            {
+                first.AddRange(Enumerable.Range(0, 100)
+                    .Select(count => new string('A', count)));
+                second.AddRange(Enumerable.Range(0, 100)
+                    .Select(count => new string('A', count)));
+
+                first.Shuffle();
+                second.Shuffle();
+
+                var implementationResult = PairSelectResult();
+                var naiveResult = _left.PairSelectNaive(
+                    _right, x => x, x => x, (l, r) => (l, r));
+
+                Assert.That(implementationResult, Is.EquivalentTo(naiveResult));
             });
     }
 }
