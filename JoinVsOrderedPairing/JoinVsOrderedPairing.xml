@@ -38,5 +38,19 @@
                 projecting paired up elements from the input sequences.
             </returns>
         </member>
+        <member name="M:JoinVsOrderedPairing.Extensions.IListExtensions.Shuffle``1(System.Collections.Generic.IList{``0})">
+            <summary>
+            This is an implementation of the Fisher-Yates shuffle. For more
+            information please consult the following links
+            <list type="bullet">
+            <item>
+                https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle#The_modern_algorithm
+            </item>
+            <item>https://stackoverflow.com/q/273313</item>
+            </list>
+            </summary>
+            <typeparam name="T">Type of elements.</typeparam>
+            <param name="elements">Elements to shuffle.</param>
+        </member>
     </members>
 </doc>

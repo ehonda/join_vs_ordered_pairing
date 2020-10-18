@@ -17,7 +17,7 @@ namespace JoinVsOrderedPairing.Extensions
         /// </summary>
         /// <typeparam name="T">Type of elements.</typeparam>
         /// <param name="elements">Elements to shuffle.</param>
-        public static IEnumerable<T> Shuffle<T>(this IList<T> elements)
+        public static IList<T> Shuffle<T>(this IList<T> elements)
         {
             var random = new Random();
             var n = elements.Count;

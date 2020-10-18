@@ -23,13 +23,13 @@ namespace JoinVsOrderedPairingTest.Tests
         {
         }
 
-        [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
-        public void Null_On_Right_Throws(PairSelector implementation)
-            => TestWithPairSelect(implementation, () =>
-                {
-                    _right = null;
-                    Assert.Throws<ArgumentNullException>(() => PairSelectResult().ToList());
-                });
+        //[TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
+        //public void Null_On_Right_Throws(PairSelector implementation)
+        //    => TestWithPairSelect(implementation, () =>
+        //        {
+        //            _right = null;
+        //            Assert.Throws<ArgumentNullException>(() => PairSelectResult().ToList());
+        //        });
 
         [TestCaseSource(typeof(PairSelectImplementations), "OrderBy")]
         [TestCaseSource(typeof(PairSelectImplementations), "Join")]
