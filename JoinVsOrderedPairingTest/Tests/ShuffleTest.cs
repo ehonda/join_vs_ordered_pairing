@@ -2,6 +2,7 @@
 using JoinVsOrderedPairingTest.TestData;
 using NUnit.Framework;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace JoinVsOrderedPairingTest.Tests
@@ -9,13 +10,14 @@ namespace JoinVsOrderedPairingTest.Tests
     [TestFixture]
     public class ShuffleTest
     {
-        private void ExpectSuccessAtLeastOnce<Actual>(
-            int tries, Func<Actual> generateActual, Func<Actual, bool> predicate)
+        private void ExpectSuccessAtLeastOnce(
+            int tries, Func<bool> predicate, string message)
             => Assert.True(
                 Enumerable
-                .Repeat(generateActual(), tries)
-                .Select(actual => predicate(actual))
-                .Aggregate((x, y) => x || y));
+                    .Repeat(0, tries)              // Can't do .Repeat(predicate(), tries)
+                    .Select(_ => predicate())      // since that will only invoke generate once
+                    .Aggregate((x, y) => x || y),
+                message);
 
         [Test]
         public void Shuffled_List_Contains_The_Same_Elements()
@@ -44,39 +46,30 @@ namespace JoinVsOrderedPairingTest.Tests
                     x_i => x_i.Item1 != x_i.Item2));
         }
 
-        // TODO: Check these numbers! They can't be right, since
-        // we get regular failures if we lower Length (e.g. to
-        // 1 << 6) and run "All". If these calculations were correct,
-        // failure probability should still be on the order of ~ 1e-20
-        // so we wouldn't expect failures any time soon!
+        // TODO: Explain how to get these numbers
         //
-        // THESE CALCULATIONS ARE FLAWED - They are left in for now, to
-        // be corrected!
-        //
-        // This test fails for any given valid position with probablity
-        //      1 / (2 ^ 10) ^ 10 ~ 8 * 10 ^ (-31) =: p
-        // It then fails for n valid runs with probability
-        //      np ~ 8n * 10 ^ (-31)
-        //
-        // The number of runs is denoted next to the different test case
-        // sources, since p is so small compared to the reciprocal of
-        // these n, the failure probabilities for all test case sources 
-        // will roughly be of the same order of magnitude:
-        //      ~ 10 ^ (-31)
-        [TestCaseSource(typeof(ShuffleTestIndices), "Boundaries")]
-        [TestCaseSource(typeof(ShuffleTestIndices), "SixteenEquidistant")]
-        // P(Failure) ~ 8 * 10 ^ (-28)
-        //[TestCaseSource(typeof(ShuffleTestIndices), "All")]
-        public void Element_At_Position_Gets_Shuffled(int position)
+        // The probability of success when doing n runs per index
+        // for m indices, with a list of length l is
+        //      (1 - 1 / l ^ n) ^ m
+        [TestCaseSource(typeof(ShuffleTestIndices), "All")]
+        public void Element_At_Position_Gets_Shuffled((int, string) positionAndMessage)
         {
             var n = ShuffleTestIndices.Length;
+            var position = positionAndMessage.Item1;
+            var failureMessage = positionAndMessage.Item2;
+
             if (position < 0 || position >= n)
                 Assert.Fail("Out of bounds position can not be tested.");
 
+            IList<int> ShuffledElements()
+                => Enumerable.Range(0, n).ToArray().Shuffle();
+
+            static bool NoFixpointAt(IList<int> x, int i) => x[i] != i;
+
             ExpectSuccessAtLeastOnce(
-                10,
-                () => Enumerable.Range(0, n).ToArray().Shuffle(),
-                actual => actual[position] != position);
+                ShuffleTestIndices.Tries,
+                () => NoFixpointAt(ShuffledElements(), position),
+                failureMessage);
         }
     }
 }
