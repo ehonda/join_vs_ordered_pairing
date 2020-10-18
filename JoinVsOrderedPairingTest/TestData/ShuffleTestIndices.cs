@@ -18,5 +18,8 @@ namespace JoinVsOrderedPairingTest.TestData
 
         public static IEnumerable<int> SixteenEquidistant
             => Enumerable.Range(0, 16).Select(x => x * Length / 16);
+
+        public static IEnumerable<int> All
+            => Enumerable.Range(0, Length);
     }
 }

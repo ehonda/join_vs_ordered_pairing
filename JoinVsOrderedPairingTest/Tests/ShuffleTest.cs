@@ -44,6 +44,15 @@ namespace JoinVsOrderedPairingTest.Tests
                     x_i => x_i.Item1 != x_i.Item2));
         }
 
+        // TODO: Check these numbers! They can't be right, since
+        // we get regular failures if we lower Length (e.g. to
+        // 1 << 6) and run "All". If these calculations were correct,
+        // failure probability should still be on the order of ~ 1e-20
+        // so we wouldn't expect failures any time soon!
+        //
+        // THESE CALCULATIONS ARE FLAWED - They are left in for now, to
+        // be corrected!
+        //
         // This test fails for any given valid position with probablity
         //      1 / (2 ^ 10) ^ 10 ~ 8 * 10 ^ (-31) =: p
         // It then fails for n valid runs with probability
@@ -56,6 +65,8 @@ namespace JoinVsOrderedPairingTest.Tests
         //      ~ 10 ^ (-31)
         [TestCaseSource(typeof(ShuffleTestIndices), "Boundaries")]
         [TestCaseSource(typeof(ShuffleTestIndices), "SixteenEquidistant")]
+        // P(Failure) ~ 8 * 10 ^ (-28)
+        //[TestCaseSource(typeof(ShuffleTestIndices), "All")]
         public void Element_At_Position_Gets_Shuffled(int position)
         {
             var n = ShuffleTestIndices.Length;
