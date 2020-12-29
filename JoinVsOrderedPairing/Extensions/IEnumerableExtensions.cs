@@ -58,8 +58,11 @@ namespace JoinVsOrderedPairing.Extensions
 
             #region DSL Setup
 
-            var leftEnumerator = left.GetEnumerator();
-            var rightEnumerator = right.GetEnumerator();
+            // For some reason, var infers nullable types for the enumerators
+            // here, even though GetEnumerator does not return a nullable
+            // reference type. To deal with that, we just declare the types expicitly.
+            IEnumerator<Left> leftEnumerator = left.GetEnumerator();
+            IEnumerator<Right> rightEnumerator = right.GetEnumerator();
 
             Left LeftElement() => leftEnumerator.Current;
             Right RightElement() => rightEnumerator.Current;
